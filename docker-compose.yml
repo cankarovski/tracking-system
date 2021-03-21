@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  app:
+    container_name: "tracking-service"
+    restart: always
+    build: ./tracking-service
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/code
+  mongo:
+    container_name: "tracking-db"
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+volumes:
+  mongodb:
