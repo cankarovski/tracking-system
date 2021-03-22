@@ -22,7 +22,11 @@ client.on("error", (err) => {
 
 client.on("message", (channel, data) => {
   const dataObj = JSON.parse(data);
-  if (options.filter.indexOf(dataObj.accountId) !== -1) {
+  if (options.filter === undefined) {
+    console.log(
+      `accountId: ${dataObj.accountId}, timestamp: ${dataObj.timestamp}, data: ${dataObj.data}`
+    );
+  } else if (options.filter.indexOf(dataObj.accountId) !== -1) {
     console.log(
       `accountId: ${dataObj.accountId}, timestamp: ${dataObj.timestamp}, data: ${dataObj.data}`
     );
