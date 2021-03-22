@@ -9,8 +9,10 @@ router.get("/accounts", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  /* console.log(req.params.id);
-  console.log(req.query); */
+  if (!req.params.id || !req.query.data) {
+    res.send("Wrong event URL format!");
+    return;
+  }
   await Account.findById(req.params.id)
     .then((acc) => {
       if (acc.isActive) {
@@ -19,7 +21,7 @@ router.get("/:id", async (req, res) => {
           JSON.stringify({
             accountId: req.params.id,
             timestamp: Date.now(),
-            ...req.query,
+            data: req.query.data,
           })
         );
         res.send("OK");
