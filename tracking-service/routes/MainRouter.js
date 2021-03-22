@@ -9,20 +9,20 @@ router.get("/accounts", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  console.log(req.params.id);
-  console.log(req.query);
+  /* console.log(req.params.id);
+  console.log(req.query); */
   await Account.findById(req.params.id)
     .then((acc) => {
       if (acc.isActive) {
-        const event = {
-          accountId: req.params.id,
-          timestamp: Date.now(),
-          ...req.query,
-        };
-        redisClient.publish("tracking-data", JSON.stringify(event), (msg) => {
-          console.log(msg);
-        });
-        res.send(event);
+        redisClient.publish(
+          "tracking-data",
+          JSON.stringify({
+            accountId: req.params.id,
+            timestamp: Date.now(),
+            ...req.query,
+          })
+        );
+        res.send("OK");
       } else res.send("Account not active!");
     })
     .catch(() => {

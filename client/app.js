@@ -1,7 +1,18 @@
 const redis = require("redis");
+const { Command } = require("commander");
+const program = new Command();
+
+program
+  .option("-a, --address <string>", "Redis server address", "localhost")
+  .option("-p, --port <number>", "Redis server port", 6379)
+  .option("-f, --filter <id...>", "Filter messages by account IDs")
+  .parse();
+
+const options = program.opts();
+
 const client = redis.createClient({
-  host: "192.168.1.18",
-  port: 6379,
+  host: options.address,
+  port: options.port,
 });
 
 client.on("error", (err) => {
@@ -9,8 +20,12 @@ client.on("error", (err) => {
 });
 
 client.on("message", (channel, data) => {
-  console.log("Received data from channel:", channel);
-  console.log(JSON.parse(data));
+  const dataObj = JSON.parse(data);
+  if (options.filter.indexOf(dataObj.accountId) !== -1) {
+    console.log(
+      `accountId: ${dataObj.accountId}, timestamp: ${dataObj.timestamp}, data: ${dataObj.data}`
+    );
+  }
 });
 
 client.subscribe("tracking-data");
