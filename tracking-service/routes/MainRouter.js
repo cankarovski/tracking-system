@@ -10,7 +10,7 @@ router.get("/accounts", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   if (!req.params.id || !req.query.data) {
-    res.send("Wrong event URL format!");
+    res.status(400).send("Wrong event URL format!");
     return;
   }
   await Account.findById(req.params.id)
@@ -25,10 +25,10 @@ router.get("/:id", async (req, res) => {
           })
         );
         res.send("OK");
-      } else res.send("Account not active!");
+      } else res.status(403).send("Account not active!");
     })
     .catch(() => {
-      res.send("Account not found!");
+      res.status(401).send("Account not found!");
     });
 });
 
