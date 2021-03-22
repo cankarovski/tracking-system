@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const accountSchema = new mongoose.Schema({
-  accountId: {
-    type: String,
-  },
   accountName: {
     type: String,
   },
@@ -10,5 +7,5 @@ const accountSchema = new mongoose.Schema({
     type: Boolean,
   },
 });
-const Account = mongoose.model("Account", accountSchema);
+const Account = mongoose.model("Account", accountSchema, "Account");
 module.exports = Account;

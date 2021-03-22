@@ -1,5 +1,6 @@
 var express = require("express");
 const Account = require("../models/Account");
+const redisClient = require("../connections/RedisClient");
 var router = express.Router();
 
 router.get("/accounts", async (req, res) => {
@@ -7,20 +8,26 @@ router.get("/accounts", async (req, res) => {
   res.json(accounts);
 });
 
-router.get("/account-create", async (req, res) => {
-  const account = new Account({
-    accountId: "12345",
-    accountName: "Account1",
-    isActive: true,
-  });
-  await account.save().then(() => console.log("Account created"));
-  res.send("Account created successfully!");
-});
-
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log(req.params.id);
   console.log(req.query);
-  res.send("Hello World!");
+  await Account.findById(req.params.id)
+    .then((acc) => {
+      if (acc.isActive) {
+        const event = {
+          accountId: req.params.id,
+          timestamp: Date.now(),
+          ...req.query,
+        };
+        redisClient.publish("tracking-data", JSON.stringify(event), (msg) => {
+          console.log(msg);
+        });
+        res.send(event);
+      } else res.send("Account not active!");
+    })
+    .catch(() => {
+      res.send("Account not found!");
+    });
 });
 
 module.exports = router;
