@@ -1,0 +1,12 @@
+[
+  {
+    "accountId": "1234",
+    "accountName": "sdsdasd",
+    "isActive": true
+  },
+  {
+    "accountId": "1234",
+    "accountName": "sddsddddssdasd",
+    "isActive": false
+  }
+]
