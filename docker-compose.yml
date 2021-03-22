@@ -4,20 +4,39 @@ services:
     container_name: "tracking-service"
     restart: always
     build: ./tracking-service
+    networks:
+      - tracking-network
     ports:
       - 8000:8000
     volumes:
       - .:/code
+    links:
+      - mongo
+      - redis
   mongo:
     container_name: "tracking-db"
     image: mongo
+    networks:
+      - tracking-network
     ports:
       - 27017:27017
-    volumes:
-      - mongodb:/data/db
   mongo-seed:
+    container_name: "mongo-seed"
     build: ./mongo-seed
+    networks:
+      - tracking-network
     links:
-      - mongodb
-volumes:
-  mongodb:
+      - mongo
+    volumes:
+      - ./mongo-seed:/mongo-seed
+  redis:
+    container_name: "redis-pubsub"
+    image: "redis:latest"
+    networks:
+      - tracking-network
+    ports:
+      - 6379:6379
+
+networks:
+  tracking-network:
+    driver: bridge
