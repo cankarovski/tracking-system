@@ -13,6 +13,15 @@ services:
     depends_on:
       - mongo
       - redis
+  apptest:
+    build: ./tracking-service
+    command: npm run test
+    networks:
+      - tracking-network
+    depends_on:
+      - app
+      - mongo
+      - redis
 
   mongo:
     container_name: "tracking-db"
