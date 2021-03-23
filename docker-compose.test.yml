@@ -1,25 +1,12 @@
 version: "3.9"
 services:
-  app:
-    container_name: "tracking-service"
-    restart: always
-    build: ./tracking-service
-    networks:
-      - tracking-network
-    ports:
-      - 8000:8000
-    volumes:
-      - .:/code
-    depends_on:
-      - mongo
-      - redis
   apptest:
+    container_name: "app-test"
     build: ./tracking-service
     command: npm run test
     networks:
       - tracking-network
     depends_on:
-      - app
       - mongo
       - redis
 
