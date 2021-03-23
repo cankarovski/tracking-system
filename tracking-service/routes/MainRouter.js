@@ -1,7 +1,9 @@
 var express = require("express");
 const Account = require("../models/Account");
-const redisClient = require("../connections/RedisClient");
+const connectRedis = require("../connections/ConnectRedis");
 var router = express.Router();
+
+const redisClient = connectRedis("redis", 6379);
 
 router.get("/accounts", async (req, res) => {
   const accounts = await Account.find();
@@ -9,7 +11,7 @@ router.get("/accounts", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-  if (!req.params.id || !req.query.data) {
+  if (!req.query.data) {
     res.status(400).send("Wrong event URL format!");
     return;
   }
