@@ -11,8 +11,15 @@ connectDb("mongo")
 
 app.use("/", mainRouter);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`App running on port number: ${port}`);
+});
+
+process.on("SIGINT", async function onSigint() {
+  console.info("Got SIGINT. Graceful shutdown ", new Date().toISOString());
+  await server.close();
+  console.log("Server closed");
+  process.exit();
 });
 
 module.exports = app;

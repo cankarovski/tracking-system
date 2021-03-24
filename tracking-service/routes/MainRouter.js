@@ -5,6 +5,13 @@ var router = express.Router();
 
 const redisClient = connectRedis("redis", 6379);
 
+async function publishEvent(id, data) {
+  await redisClient.publish(
+    "tracking-data",
+    `{"accountId": "${id}", "timestamp": "${Date.now()}", "data": "${data}"}`
+  );
+}
+
 router.get("/accounts", async (req, res) => {
   const accounts = await Account.find();
   res.json(accounts);
@@ -16,16 +23,10 @@ router.get("/:id", async (req, res) => {
     return;
   }
   await Account.findById(req.params.id)
+    .lean()
     .then((acc) => {
       if (acc.isActive) {
-        redisClient.publish(
-          "tracking-data",
-          JSON.stringify({
-            accountId: req.params.id,
-            timestamp: Date.now(),
-            data: req.query.data,
-          })
-        );
+        publishEvent(req.params.id, req.query.data);
         res.send("OK");
       } else res.status(403).send("Account not active!");
     })
