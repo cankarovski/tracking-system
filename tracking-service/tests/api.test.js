@@ -4,7 +4,6 @@ var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiHttp);
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const should = chai.should();
 
 const app = require("../app");
 const connectDb = require("../connections/ConnectDb");
@@ -22,7 +21,7 @@ describe("API GET routes", () => {
       });
   }).timeout(5000);
 
-  it("GET /:id?data=string active account", async () => {
+  it("Publish event on active account, GET /:id?data=string", async () => {
     await connectDb("mongo");
     const accounts = await Account.find();
     let activeAccount = accounts.find((acc) => {
@@ -37,7 +36,7 @@ describe("API GET routes", () => {
       });
   }).timeout(5000);
 
-  it("GET /:id?data=string inactive account", async () => {
+  it("Publish event on inactive account, GET /:id?data=string", async () => {
     await connectDb("mongo");
     const accounts = await Account.find();
     let activeAccount = accounts.find((acc) => {
@@ -52,7 +51,7 @@ describe("API GET routes", () => {
       });
   }).timeout(5000);
 
-  it("GET /:id?data=string unexisting account", (done) => {
+  it("Publish event on unexisting account, GET /1?data=string", (done) => {
     chai
       .request(app)
       .get(`/1?data=somestring`)
@@ -62,7 +61,7 @@ describe("API GET routes", () => {
       });
   }).timeout(5000);
 
-  it("GET /:id?evt=string wrong URL format", (done) => {
+  it("Publish wrong URL event format, GET /:id?evt=string", (done) => {
     chai
       .request(app)
       .get(`/1?evt=somestring`)
